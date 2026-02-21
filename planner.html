@@ -16,14 +16,36 @@
     </nav>
   </header>
 
-  <main class="planner-container">
-    <h1 id="map-title">Loading...</h1>
-    <p id="map-description"></p>
+  <main class="planner-layout">
 
-    <div class="planner-area">
-      <p>This is where your tactical planner tools will go.</p>
+  <!-- Sidebar -->
+  <aside class="planner-sidebar">
+    <h2>Team Management</h2>
+
+    <div class="team-section">
+      <h3>Blue Team</h3>
+      <p>No players placed</p>
     </div>
-  </main>
+
+    <div class="team-section">
+      <h3>Red Team</h3>
+      <p>No players placed</p>
+    </div>
+
+    <div class="team-section">
+      <h3>Objectives</h3>
+      <p>No objectives placed</p>
+    </div>
+  </aside>
+
+  <!-- Main Map Area -->
+  <section class="planner-map">
+    <h1 id="map-title">Loading...</h1>
+    <img id="map-image" src="" alt="Map Image">
+  </section>
+
+</main>
+
 
   <script>
     // Read ?map=bazaar from the URL
