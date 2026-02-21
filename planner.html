@@ -7,216 +7,222 @@
 </head>
 <body>
 
-  <header class="navbar">
-    <div class="logo">ONWARD</div>
-    <nav class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="maps.html">Maps</a>
-      <a href="#">Community</a>
-    </nav>
-  </header>
+<header class="navbar">
+  <div class="logo">ONWARD</div>
+  <nav class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="maps.html">Maps</a>
+    <a href="#">Community</a>
+  </nav>
+</header>
 
-  <main class="planner-shell">
-    <!-- LEFT QUICK TOOLBAR -->
-    <aside class="quick-toolbar">
-      <div class="quick-toolbar-inner">
-        <button class="tool-btn tool-player" title="Place player"></button>
+<main class="planner-shell">
+
+  <!-- LEFT TOOLBAR -->
+  <aside class="quick-toolbar">
+    <div class="quick-toolbar-inner">
+      <button class="tool-btn tool-player" id="placePlayerBtn" title="Place Player"></button>
+    </div>
+  </aside>
+
+  <!-- MAP AREA -->
+  <section class="planner-map-area" id="mapArea">
+    <h1 id="map-title">Loading...</h1>
+    <img id="map-image" src="" alt="Map Image">
+    <div id="player-layer"></div>
+  </section>
+
+  <!-- RIGHT SIDEBAR -->
+  <aside class="planner-sidebar">
+    <h2>Team Management</h2>
+
+    <div class="team-toggle">
+      <button class="team-filter-btn active" data-filter="both">Show Both Teams</button>
+      <button class="team-filter-btn" data-filter="blue">Blue Team</button>
+      <button class="team-filter-btn" data-filter="red">Red Team</button>
+    </div>
+
+    <div class="team-section">
+      <h3>BLUE TEAM PLAYERS</h3>
+      <p id="blue-count">0 players</p>
+    </div>
+
+    <div class="team-section">
+      <h3>RED TEAM PLAYERS</h3>
+      <p id="red-count">0 players</p>
+    </div>
+
+    <div class="team-section">
+      <h3>Roles</h3>
+      <div class="role-buttons">
+        <button class="role-btn" data-role="rifleman">Rifleman</button>
+        <button class="role-btn" data-role="specialist">Specialist</button>
+        <button class="role-btn" data-role="support">Support</button>
+        <button class="role-btn" data-role="marksman">Marksman</button>
       </div>
-    </aside>
+    </div>
+  </aside>
 
-    <!-- MAP AREA -->
-    <section class="planner-map-area">
-      <h1 id="map-title">Loading...</h1>
-      <img id="map-image" src="" alt="Map Image">
-      <div id="player-layer"></div>
-    </section>
+</main>
 
-    <!-- RIGHT SIDEBAR -->
-    <aside class="planner-sidebar">
-      <h2>Team Management</h2>
+<script>
+/* ---------------- MAP LOADING ---------------- */
+const params = new URLSearchParams(window.location.search);
+const map = params.get("map");
 
-      <div class="team-toggle">
-        <button class="team-filter-btn active" data-filter="both">Show Both Teams</button>
-        <button class="team-filter-btn" data-filter="blue">Blue Team</button>
-        <button class="team-filter-btn" data-filter="red">Red Team</button>
-      </div>
+const mapInfo = {
+  bazaar: { name: "Bazaar", image: "images/bazaar.jpg" },
+  downfall: { name: "Downfall", image: "images/downfall.jpg" },
+  quarantine: { name: "Quarantine", image: "images/quarantine.jpg" },
+  subway: { name: "Subway", image: "images/subway_topdown.png" },
+  suburbia: { name: "Suburbia", image: "images/suburbia.png" },
+  tanker: { name: "Tanker", image: "images/tanker.jpg" }
+};
 
-      <div class="team-section">
-        <h3>BLUE TEAM PLAYERS</h3>
-        <p id="blue-count">0 players</p>
-      </div>
+if (mapInfo[map]) {
+  document.getElementById("map-title").textContent = mapInfo[map].name;
+  document.getElementById("map-image").src = mapInfo[map].image;
+}
 
-      <div class="team-section">
-        <h3>RED TEAM PLAYERS</h3>
-        <p id="red-count">0 players</p>
-      </div>
+/* ---------------- PLAYER SYSTEM ---------------- */
+let players = {};
+let selectedPlayer = null;
+let teamFilter = "both";
+let placingPlayer = false;
 
-      <div class="team-section">
-        <h3>Roles</h3>
-        <div class="role-buttons">
-          <button class="role-btn" data-role="rifleman">Rifleman</button>
-          <button class="role-btn" data-role="specialist">Specialist</button>
-          <button class="role-btn" data-role="support">Support</button>
-          <button class="role-btn" data-role="marksman">Marksman</button>
-        </div>
-      </div>
-    </aside>
-  </main>
+let blueCount = 0;
+let redCount = 0;
 
-  <script>
-    // Read ?map=suburbia etc.
-    const params = new URLSearchParams(window.location.search);
-    const map = params.get("map");
+function updateCounts() {
+  document.getElementById("blue-count").textContent = `${blueCount} players`;
+  document.getElementById("red-count").textContent = `${redCount} players`;
+}
 
-    const mapInfo = {
-      bazaar: { name: "Bazaar", image: "images/bazaar.jpg" },
-      downfall: { name: "Downfall", image: "images/downfall.jpg" },
-      quarantine: { name: "Quarantine", image: "images/quarantine.jpg" },
-      subway: { name: "Subway", image: "images/subway_topdown.png" },
-      suburbia: { name: "Suburbia", image: "images/suburbia.png" },
-      tanker: { name: "Tanker", image: "images/tanker.jpg" }
-    };
+function renderPlayers() {
+  const layer = document.getElementById("player-layer");
+  layer.innerHTML = "";
 
-    if (mapInfo[map]) {
-      document.getElementById("map-title").textContent = mapInfo[map].name;
-      document.getElementById("map-image").src = mapInfo[map].image;
-    } else {
-      document.getElementById("map-title").textContent = "Unknown Map";
-    }
+  for (const id in players) {
+    const p = players[id];
 
-    // -------------------------------
-    // PLAYER + TEAM + ROLE SYSTEM
-    // -------------------------------
-    let players = {
-      blue1: { x: 200, y: 200, team: "blue", role: "rifleman" },
-      blue2: { x: 260, y: 200, team: "blue", role: "rifleman" },
-      red1:  { x: 200, y: 300, team: "red", role: "rifleman" },
-      red2:  { x: 260, y: 300, team: "red", role: "rifleman" }
-    };
+    const icon = document.createElement("div");
+    icon.className = `player-icon player-${p.team}`;
+    icon.textContent = id.toUpperCase();
+    icon.style.left = p.x + "px";
+    icon.style.top = p.y + "px";
 
-    let selectedPlayer = null;
-    let teamFilter = "both"; // "both" | "blue" | "red"
+    if (teamFilter === "blue" && p.team === "blue") icon.classList.add("highlight-blue");
+    else if (teamFilter === "red" && p.team === "red") icon.classList.add("highlight-red");
+    else if (teamFilter !== "both") icon.classList.add("dimmed");
 
-    function updateCounts() {
-      const blueCount = Object.values(players).filter(p => p.team === "blue").length;
-      const redCount = Object.values(players).filter(p => p.team === "red").length;
-      document.getElementById("blue-count").textContent = `${blueCount} player${blueCount === 1 ? "" : "s"}`;
-      document.getElementById("red-count").textContent = `${redCount} player${redCount === 1 ? "" : "s"}`;
-    }
+    if (selectedPlayer === id) icon.classList.add("selected-player");
 
-    function renderPlayers() {
-      const layer = document.getElementById("player-layer");
-      layer.innerHTML = "";
-
-      for (const id in players) {
-        const p = players[id];
-
-        const icon = document.createElement("div");
-        icon.className = `player-icon player-${p.team}`;
-        icon.textContent = id.toUpperCase();
-        icon.style.left = p.x + "px";
-        icon.style.top = p.y + "px";
-
-        // Team filter highlighting
-        if (teamFilter === "blue" && p.team === "blue") {
-          icon.classList.add("highlight-blue");
-        } else if (teamFilter === "red" && p.team === "red") {
-          icon.classList.add("highlight-red");
-        } else if (teamFilter !== "both") {
-          icon.classList.add("dimmed");
-        }
-
-        // Selected player subtle outline
-        if (selectedPlayer === id) {
-          icon.classList.add("selected-player");
-        }
-
-        icon.addEventListener("mousedown", (e) => {
-          selectPlayer(id);
-          startDrag(e, id);
-        });
-
-        layer.appendChild(icon);
-      }
-
-      updateCounts();
-    }
-
-    function selectPlayer(id) {
-      selectedPlayer = id;
-
-      document.querySelectorAll(".role-btn").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.role === players[id].role);
-      });
-
-      renderPlayers();
-    }
-
-    // Dragging
-    let dragging = null;
-    let offsetX = 0;
-    let offsetY = 0;
-
-    function startDrag(e, id) {
-      dragging = id;
-      offsetX = e.clientX - players[id].x;
-      offsetY = e.clientY - players[id].y;
-
-      document.addEventListener("mousemove", dragMove);
-      document.addEventListener("mouseup", stopDrag);
-    }
-
-    function dragMove(e) {
-      if (!dragging) return;
-
-      players[dragging].x = e.clientX - offsetX;
-      players[dragging].y = e.clientY - offsetY;
-
-      renderPlayers();
-    }
-
-    function stopDrag() {
-      dragging = null;
-      document.removeEventListener("mousemove", dragMove);
-      document.removeEventListener("mouseup", stopDrag);
-    }
-
-    // Role buttons
-    document.querySelectorAll(".role-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        if (!selectedPlayer) return;
-
-        players[selectedPlayer].role = btn.dataset.role;
-
-        document.querySelectorAll(".role-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-
-        renderPlayers();
-      });
+    icon.addEventListener("mousedown", (e) => {
+      selectPlayer(id);
+      startDrag(e, id);
     });
 
-    // Team filter buttons
-    document.querySelectorAll(".team-filter-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".team-filter-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        teamFilter = btn.dataset.filter;
-        renderPlayers();
-      });
-    });
+    layer.appendChild(icon);
+  }
+}
 
-    // Quick toolbar player tool (UI only for now)
-    document.querySelector(".tool-player").addEventListener("click", () => {
-      // Placeholder: later we can wire this to actually place a new player
-      // For now, just a visual "pressed" state
-      document.querySelector(".tool-player").classList.add("tool-active");
-      setTimeout(() => {
-        document.querySelector(".tool-player").classList.remove("tool-active");
-      }, 150);
-    });
+function selectPlayer(id) {
+  selectedPlayer = id;
+
+  document.querySelectorAll(".role-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.role === players[id].role);
+  });
+
+  renderPlayers();
+}
+
+/* ---------------- DRAGGING ---------------- */
+let dragging = null;
+let offsetX = 0;
+let offsetY = 0;
+
+function startDrag(e, id) {
+  dragging = id;
+  offsetX = e.clientX - players[id].x;
+  offsetY = e.clientY - players[id].y;
+
+  document.addEventListener("mousemove", dragMove);
+  document.addEventListener("mouseup", stopDrag);
+}
+
+function dragMove(e) {
+  if (!dragging) return;
+
+  players[dragging].x = e.clientX - offsetX;
+  players[dragging].y = e.clientY - offsetY;
+
+  renderPlayers();
+}
+
+function stopDrag() {
+  dragging = null;
+  document.removeEventListener("mousemove", dragMove);
+  document.removeEventListener("mouseup", stopDrag);
+}
+
+/* ---------------- ROLE BUTTONS ---------------- */
+document.querySelectorAll(".role-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (!selectedPlayer) return;
+
+    players[selectedPlayer].role = btn.dataset.role;
+
+    document.querySelectorAll(".role-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
 
     renderPlayers();
-  </script>
+  });
+});
+
+/* ---------------- TEAM FILTER ---------------- */
+document.querySelectorAll(".team-filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".team-filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    teamFilter = btn.dataset.filter;
+    renderPlayers();
+  });
+});
+
+/* ---------------- PLAYER PLACEMENT ---------------- */
+document.getElementById("placePlayerBtn").addEventListener("click", () => {
+  placingPlayer = !placingPlayer;
+  document.getElementById("placePlayerBtn").classList.toggle("tool-active", placingPlayer);
+});
+
+document.getElementById("mapArea").addEventListener("click", (e) => {
+  if (!placingPlayer) return;
+
+  const rect = document.getElementById("mapArea").getBoundingClientRect();
+  const x = e.clientX - rect.left - 16;
+  const y = e.clientY - rect.top - 56;
+
+  let team = "blue";
+  if (teamFilter === "red") team = "red";
+
+  if (team === "blue") blueCount++;
+  else redCount++;
+
+  const id = team + blueCount + redCount;
+
+  players[id] = { x, y, team, role: "rifleman" };
+
+  placingPlayer = false;
+  document.getElementById("placePlayerBtn").classList.remove("tool-active");
+
+  renderPlayers();
+  updateCounts();
+});
+
+renderPlayers();
+updateCounts();
+</script>
 
 </body>
 </html>
