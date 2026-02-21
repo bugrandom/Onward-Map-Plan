@@ -224,4 +224,79 @@ body {
 .player-icon:active {
   cursor: grabbing;
 }
+/* Planner Layout */
+.planner-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  height: calc(100vh - 80px);
+  background: #050608;
+  position: relative;
+}
+
+/* Sidebar */
+.planner-sidebar {
+  background: #0b0e11;
+  border-right: 1px solid #1b1f24;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* Map Area */
+.planner-map {
+  position: relative;
+  padding: 20px;
+  text-align: center;
+}
+
+.planner-map h1 {
+  margin-bottom: 16px;
+  color: #e2e8f0;
+}
+
+.planner-map img {
+  width: 100%;
+  height: calc(100% - 60px);
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid #1b1f24;
+}
+
+/* Player Layer */
+#player-layer {
+  position: absolute;
+  top: 80px; /* below navbar */
+  left: 260px; /* beside sidebar */
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.player-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  position: absolute;
+  cursor: grab;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.player-blue {
+  background: #1e90ff;
+  border: 2px solid #87cefa;
+}
+
+.player-red {
+  background: #ff4d4d;
+  border: 2px solid #ff9999;
+}
+
+.player-icon:active {
+  cursor: grabbing;
+}
 
