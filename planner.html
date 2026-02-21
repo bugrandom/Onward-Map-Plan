@@ -52,6 +52,14 @@
     const params = new URLSearchParams(window.location.search);
     const map = params.get("map");
 
+    // Player data
+let players = {
+  blue1: { x: 200, y: 200, team: "blue" },
+  blue2: { x: 260, y: 200, team: "blue" },
+  red1:  { x: 200, y: 300, team: "red" },
+  red2:  { x: 260, y: 300, team: "red" }
+};
+
     // Map data (now includes image paths)
     const mapInfo = {
       bazaar: {
