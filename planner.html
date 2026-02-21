@@ -36,6 +36,18 @@
         <h3>Objectives</h3>
         <p>No objectives placed</p>
       </div>
+
+      <!-- ROLE SELECTOR -->
+      <div class="team-section">
+        <h3>Role</h3>
+        <div class="role-buttons">
+          <button class="role-btn" data-role="rifleman">🔫 Rifleman</button>
+          <button class="role-btn" data-role="specialist">⚙️ Specialist</button>
+          <button class="role-btn" data-role="support">📦 Support</button>
+          <button class="role-btn" data-role="marksman">🎯 Marksman</button>
+        </div>
+      </div>
+
     </aside>
 
     <!-- Main Map Area -->
@@ -56,30 +68,12 @@
 
     // Map data (with images)
     const mapInfo = {
-      bazaar: {
-        name: "Bazaar",
-        image: "images/bazaar.jpg"
-      },
-      downfall: {
-        name: "Downfall",
-        image: "images/downfall.jpg"
-      },
-      quarantine: {
-        name: "Quarantine",
-        image: "images/quarantine.jpg"
-      },
-      subway: {
-        name: "Subway",
-        image: "images/subway_topdown.png" // change to your custom image
-      },
-      suburbia: {
-        name: "Suburbia",
-        image: "images/suburbia.png"
-      },
-      tanker: {
-        name: "Tanker",
-        image: "images/tanker.jpg"
-      }
+      bazaar: { name: "Bazaar", image: "images/bazaar.jpg" },
+      downfall: { name: "Downfall", image: "images/downfall.jpg" },
+      quarantine: { name: "Quarantine", image: "images/quarantine.jpg" },
+      subway: { name: "Subway", image: "images/subway_topdown.png" },
+      suburbia: { name: "Suburbia", image: "images/suburbia.jpg" },
+      tanker: { name: "Tanker", image: "images/tanker.jpg" }
     };
 
     // Update the page with map info
@@ -92,16 +86,18 @@
     }
 
     // -------------------------------
-    // DRAGGABLE PLAYER SYSTEM
+    // PLAYER + ROLE SYSTEM
     // -------------------------------
 
     // Player data
     let players = {
-      blue1: { x: 200, y: 200, team: "blue" },
-      blue2: { x: 260, y: 200, team: "blue" },
-      red1:  { x: 200, y: 300, team: "red" },
-      red2:  { x: 260, y: 300, team: "red" }
+      blue1: { x: 200, y: 200, team: "blue", role: "rifleman" },
+      blue2: { x: 260, y: 200, team: "blue", role: "rifleman" },
+      red1:  { x: 200, y: 300, team: "red", role: "rifleman" },
+      red2:  { x: 260, y: 300, team: "red", role: "rifleman" }
     };
+
+    let selectedPlayer = null;
 
     // Render players on the map
     function renderPlayers() {
@@ -117,10 +113,30 @@
         icon.style.left = p.x + "px";
         icon.style.top = p.y + "px";
 
-        icon.addEventListener("mousedown", (e) => startDrag(e, id));
+        // Highlight selected player
+        if (selectedPlayer === id) {
+          icon.classList.add("selected-player");
+        }
+
+        icon.addEventListener("mousedown", (e) => {
+          selectPlayer(id);
+          startDrag(e, id);
+        });
 
         layer.appendChild(icon);
       }
+    }
+
+    // Select a player
+    function selectPlayer(id) {
+      selectedPlayer = id;
+
+      // Update role button highlight
+      document.querySelectorAll(".role-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.role === players[id].role);
+      });
+
+      renderPlayers();
     }
 
     // Dragging logic
@@ -151,6 +167,21 @@
       document.removeEventListener("mousemove", dragMove);
       document.removeEventListener("mouseup", stopDrag);
     }
+
+    // Role button click
+    document.querySelectorAll(".role-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (!selectedPlayer) return;
+
+        players[selectedPlayer].role = btn.dataset.role;
+
+        // Update active button
+        document.querySelectorAll(".role-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        renderPlayers();
+      });
+    });
 
     // Initial render
     renderPlayers();
