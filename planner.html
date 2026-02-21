@@ -96,6 +96,7 @@
       red1:  { x: 200, y: 300, team: "red", role: "rifleman" },
       red2:  { x: 260, y: 300, team: "red", role: "rifleman" }
     };
+
     // Objective icons
     let objectives = {
       uplink: { x: 400, y: 250, type: "uplink" },
@@ -118,7 +119,6 @@
         icon.style.left = p.x + "px";
         icon.style.top = p.y + "px";
 
-        // Highlight selected player
         if (selectedPlayer === id) {
           icon.classList.add("selected-player");
         }
@@ -136,30 +136,31 @@
     function selectPlayer(id) {
       selectedPlayer = id;
 
-      // Update role button highlight
       document.querySelectorAll(".role-btn").forEach(btn => {
         btn.classList.toggle("active", btn.dataset.role === players[id].role);
       });
 
-      renderPlayers();
+      renderAll();
     }
+
+    // Render objectives
     function renderObjectives() {
-  const layer = document.getElementById("player-layer");
+      const layer = document.getElementById("player-layer");
 
-  for (const id in objectives) {
-    const o = objectives[id];
+      for (const id in objectives) {
+        const o = objectives[id];
 
-    const icon = document.createElement("div");
-    icon.className = `objective-icon ${o.type}`;
-    icon.textContent = o.type === "uplink" ? "📡" : "🎯";
-    icon.style.left = o.x + "px";
-    icon.style.top = o.y + "px";
+        const icon = document.createElement("div");
+        icon.className = `objective-icon ${o.type}`;
+        icon.textContent = o.type === "uplink" ? "📡" : "🎯";
+        icon.style.left = o.x + "px";
+        icon.style.top = o.y + "px";
 
-    icon.addEventListener("mousedown", (e) => startObjectiveDrag(e, id));
+        icon.addEventListener("mousedown", (e) => startObjectiveDrag(e, id));
 
-    layer.appendChild(icon);
-  }
-}
+        layer.appendChild(icon);
+      }
+    }
 
     // Dragging logic
     let dragging = null;
@@ -181,7 +182,7 @@
       players[dragging].x = e.clientX - offsetX;
       players[dragging].y = e.clientY - offsetY;
 
-      renderPlayers();
+      renderAll();
     }
 
     function stopDrag() {
@@ -189,31 +190,33 @@
       document.removeEventListener("mousemove", dragMove);
       document.removeEventListener("mouseup", stopDrag);
     }
+
+    // Objective dragging
     let draggingObjective = null;
 
-function startObjectiveDrag(e, id) {
-  draggingObjective = id;
-  offsetX = e.clientX - objectives[id].x;
-  offsetY = e.clientY - objectives[id].y;
+    function startObjectiveDrag(e, id) {
+      draggingObjective = id;
+      offsetX = e.clientX - objectives[id].x;
+      offsetY = e.clientY - objectives[id].y;
 
-  document.addEventListener("mousemove", dragObjectiveMove);
-  document.addEventListener("mouseup", stopObjectiveDrag);
-}
+      document.addEventListener("mousemove", dragObjectiveMove);
+      document.addEventListener("mouseup", stopObjectiveDrag);
+    }
 
-function dragObjectiveMove(e) {
-  if (!draggingObjective) return;
+    function dragObjectiveMove(e) {
+      if (!draggingObjective) return;
 
-  objectives[draggingObjective].x = e.clientX - offsetX;
-  objectives[draggingObjective].y = e.clientY - offsetY;
+      objectives[draggingObjective].x = e.clientX - offsetX;
+      objectives[draggingObjective].y = e.clientY - offsetY;
 
-  renderAll();
-}
+      renderAll();
+    }
 
-function stopObjectiveDrag() {
-  draggingObjective = null;
-  document.removeEventListener("mousemove", dragObjectiveMove);
-  document.removeEventListener("mouseup", stopObjectiveDrag);
-}
+    function stopObjectiveDrag() {
+      draggingObjective = null;
+      document.removeEventListener("mousemove", dragObjectiveMove);
+      document.removeEventListener("mouseup", stopObjectiveDrag);
+    }
 
     // Role button click
     document.querySelectorAll(".role-btn").forEach(btn => {
@@ -222,16 +225,20 @@ function stopObjectiveDrag() {
 
         players[selectedPlayer].role = btn.dataset.role;
 
-        // Update active button
         document.querySelectorAll(".role-btn").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
 
-        renderPlayers();
+        renderAll();
       });
     });
 
-    // Initial render
-    renderPlayers();
+    // Render everything
+    function renderAll() {
+      renderPlayers();
+      renderObjectives();
+    }
+
+    renderAll();
   </script>
 
 </body>
