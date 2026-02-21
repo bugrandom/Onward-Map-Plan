@@ -299,4 +299,24 @@ body {
 .player-icon:active {
   cursor: grabbing;
 }
+/* Objective Icons */
+.objective-icon {
+  width: 36px;
+  height: 36px;
+  position: absolute;
+  cursor: grab;
+  pointer-events: auto;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.objective-icon.uplink {
+  text-shadow: 0 0 6px #00eaff;
+}
+
+.objective-icon.objective {
+  text-shadow: 0 0 6px #ffcc00;
+}
 
