@@ -143,6 +143,23 @@
 
       renderPlayers();
     }
+    function renderObjectives() {
+  const layer = document.getElementById("player-layer");
+
+  for (const id in objectives) {
+    const o = objectives[id];
+
+    const icon = document.createElement("div");
+    icon.className = `objective-icon ${o.type}`;
+    icon.textContent = o.type === "uplink" ? "📡" : "🎯";
+    icon.style.left = o.x + "px";
+    icon.style.top = o.y + "px";
+
+    icon.addEventListener("mousedown", (e) => startObjectiveDrag(e, id));
+
+    layer.appendChild(icon);
+  }
+}
 
     // Dragging logic
     let dragging = null;
@@ -172,6 +189,31 @@
       document.removeEventListener("mousemove", dragMove);
       document.removeEventListener("mouseup", stopDrag);
     }
+    let draggingObjective = null;
+
+function startObjectiveDrag(e, id) {
+  draggingObjective = id;
+  offsetX = e.clientX - objectives[id].x;
+  offsetY = e.clientY - objectives[id].y;
+
+  document.addEventListener("mousemove", dragObjectiveMove);
+  document.addEventListener("mouseup", stopObjectiveDrag);
+}
+
+function dragObjectiveMove(e) {
+  if (!draggingObjective) return;
+
+  objectives[draggingObjective].x = e.clientX - offsetX;
+  objectives[draggingObjective].y = e.clientY - offsetY;
+
+  renderAll();
+}
+
+function stopObjectiveDrag() {
+  draggingObjective = null;
+  document.removeEventListener("mousemove", dragObjectiveMove);
+  document.removeEventListener("mouseup", stopObjectiveDrag);
+}
 
     // Role button click
     document.querySelectorAll(".role-btn").forEach(btn => {
