@@ -24,12 +24,12 @@
 
       <div class="team-section">
         <h3>Blue Team</h3>
-        <p>No players placed</p>
+        <p>Blue 1, Blue 2</p>
       </div>
 
       <div class="team-section">
         <h3>Red Team</h3>
-        <p>No players placed</p>
+        <p>Red 1, Red 2</p>
       </div>
 
       <div class="team-section">
@@ -42,6 +42,8 @@
     <section class="planner-map">
       <h1 id="map-title">Loading...</h1>
       <img id="map-image" src="" alt="Map Image">
+
+      <!-- Player icons appear here -->
       <div id="player-layer"></div>
     </section>
 
@@ -52,15 +54,7 @@
     const params = new URLSearchParams(window.location.search);
     const map = params.get("map");
 
-    // Player data
-let players = {
-  blue1: { x: 200, y: 200, team: "blue" },
-  blue2: { x: 260, y: 200, team: "blue" },
-  red1:  { x: 200, y: 300, team: "red" },
-  red2:  { x: 260, y: 300, team: "red" }
-};
-
-    // Map data (now includes image paths)
+    // Map data (with images)
     const mapInfo = {
       bazaar: {
         name: "Bazaar",
@@ -76,7 +70,7 @@ let players = {
       },
       subway: {
         name: "Subway",
-        image: "images/subway_topdown.png" // <-- change this to your custom image
+        image: "images/subway_topdown.png" // change to your custom image
       },
       suburbia: {
         name: "Suburbia",
@@ -88,7 +82,7 @@ let players = {
       }
     };
 
-    // Update the page
+    // Update the page with map info
     if (mapInfo[map]) {
       document.getElementById("map-title").textContent = mapInfo[map].name;
       document.getElementById("map-image").src = mapInfo[map].image;
@@ -96,6 +90,70 @@ let players = {
       document.getElementById("map-title").textContent = "Unknown Map";
       document.getElementById("map-image").src = "";
     }
+
+    // -------------------------------
+    // DRAGGABLE PLAYER SYSTEM
+    // -------------------------------
+
+    // Player data
+    let players = {
+      blue1: { x: 200, y: 200, team: "blue" },
+      blue2: { x: 260, y: 200, team: "blue" },
+      red1:  { x: 200, y: 300, team: "red" },
+      red2:  { x: 260, y: 300, team: "red" }
+    };
+
+    // Render players on the map
+    function renderPlayers() {
+      const layer = document.getElementById("player-layer");
+      layer.innerHTML = "";
+
+      for (const id in players) {
+        const p = players[id];
+
+        const icon = document.createElement("div");
+        icon.className = `player-icon player-${p.team}`;
+        icon.textContent = id.toUpperCase();
+        icon.style.left = p.x + "px";
+        icon.style.top = p.y + "px";
+
+        icon.addEventListener("mousedown", (e) => startDrag(e, id));
+
+        layer.appendChild(icon);
+      }
+    }
+
+    // Dragging logic
+    let dragging = null;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    function startDrag(e, id) {
+      dragging = id;
+      offsetX = e.clientX - players[id].x;
+      offsetY = e.clientY - players[id].y;
+
+      document.addEventListener("mousemove", dragMove);
+      document.addEventListener("mouseup", stopDrag);
+    }
+
+    function dragMove(e) {
+      if (!dragging) return;
+
+      players[dragging].x = e.clientX - offsetX;
+      players[dragging].y = e.clientY - offsetY;
+
+      renderPlayers();
+    }
+
+    function stopDrag() {
+      dragging = null;
+      document.removeEventListener("mousemove", dragMove);
+      document.removeEventListener("mouseup", stopDrag);
+    }
+
+    // Initial render
+    renderPlayers();
   </script>
 
 </body>
