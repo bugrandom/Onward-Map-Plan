@@ -170,4 +170,20 @@ body {
 .map-card h3 {
   margin-bottom: 12px;
 }
+/* Planner Page */
+
+.planner-container {
+  padding: 40px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.planner-area {
+  margin-top: 24px;
+  background: #0b0e11;
+  border: 1px solid #1b1f24;
+  border-radius: 8px;
+  padding: 20px;
+  min-height: 400px;
+}
 
