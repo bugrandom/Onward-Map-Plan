@@ -18,75 +18,74 @@
 
   <main class="planner-layout">
 
-  <!-- Sidebar -->
-  <aside class="planner-sidebar">
-    <h2>Team Management</h2>
+    <!-- Sidebar -->
+    <aside class="planner-sidebar">
+      <h2>Team Management</h2>
 
-    <div class="team-section">
-      <h3>Blue Team</h3>
-      <p>No players placed</p>
-    </div>
+      <div class="team-section">
+        <h3>Blue Team</h3>
+        <p>No players placed</p>
+      </div>
 
-    <div class="team-section">
-      <h3>Red Team</h3>
-      <p>No players placed</p>
-    </div>
+      <div class="team-section">
+        <h3>Red Team</h3>
+        <p>No players placed</p>
+      </div>
 
-    <div class="team-section">
-      <h3>Objectives</h3>
-      <p>No objectives placed</p>
-    </div>
-  </aside>
+      <div class="team-section">
+        <h3>Objectives</h3>
+        <p>No objectives placed</p>
+      </div>
+    </aside>
 
-  <!-- Main Map Area -->
-  <section class="planner-map">
-    <h1 id="map-title">Loading...</h1>
-    <img id="map-image" src="" alt="Map Image">
-  </section>
+    <!-- Main Map Area -->
+    <section class="planner-map">
+      <h1 id="map-title">Loading...</h1>
+      <img id="map-image" src="" alt="Map Image">
+    </section>
 
-</main>
-
+  </main>
 
   <script>
     // Read ?map=bazaar from the URL
     const params = new URLSearchParams(window.location.search);
     const map = params.get("map");
 
-    // Map data (you can expand this later)
+    // Map data (now includes image paths)
     const mapInfo = {
-  bazaar: {
-    name: "Bazaar",
-    image: "images/bazaar.jpg"
-  },
-  downfall: {
-    name: "Downfall",
-    image: "images/downfall.jpg"
-  },
-  quarantine: {
-    name: "Quarantine",
-    image: "images/quarantine.jpg"
-  },
-  subway: {
-    name: "Subway",
-    image: "images/YOUR_IMAGE_HERE.jpg"
-  },
-  suburbia: {
-    name: "Suburbia",
-    image: "images/suburbia.jpg"
-  },
-  tanker: {
-    name: "Tanker",
-    image: "images/tanker.jpg"
-  }
-};
+      bazaar: {
+        name: "Bazaar",
+        image: "images/bazaar.jpg"
+      },
+      downfall: {
+        name: "Downfall",
+        image: "images/downfall.jpg"
+      },
+      quarantine: {
+        name: "Quarantine",
+        image: "images/quarantine.jpg"
+      },
+      subway: {
+        name: "Subway",
+        image: "images/subway_topdown.png" // <-- change this to your custom image
+      },
+      suburbia: {
+        name: "Suburbia",
+        image: "images/suburbia.jpg"
+      },
+      tanker: {
+        name: "Tanker",
+        image: "images/tanker.jpg"
+      }
+    };
 
     // Update the page
     if (mapInfo[map]) {
       document.getElementById("map-title").textContent = mapInfo[map].name;
-      document.getElementById("map-description").textContent = mapInfo[map].description;
+      document.getElementById("map-image").src = mapInfo[map].image;
     } else {
       document.getElementById("map-title").textContent = "Unknown Map";
-      document.getElementById("map-description").textContent = "This map does not exist.";
+      document.getElementById("map-image").src = "";
     }
   </script>
 
