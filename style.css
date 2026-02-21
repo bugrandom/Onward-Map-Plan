@@ -121,4 +121,53 @@ body {
   text-align: right;
   border-top: 1px solid #1b1f24;
 }
+/* Maps Page */
+
+.maps-container {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.maps-title {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.maps-subtitle {
+  color: #a0acba;
+  margin-bottom: 32px;
+}
+
+.map-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.map-card {
+  background: #0b0e11;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #1b1f24;
+  transition: 0.2s ease;
+}
+
+.map-card:hover {
+  border-color: #19c651;
+  box-shadow: 0 0 12px #19c65133;
+}
+
+.map-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.map-card h3 {
+  margin-bottom: 12px;
+}
 
