@@ -319,4 +319,7 @@ body {
 .objective-icon.objective {
   text-shadow: 0 0 6px #ffcc00;
 }
+.selected-player {
+  box-shadow: 0 0 12px 4px #19c651;
+}
 
