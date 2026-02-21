@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Planner</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="logo">ONWARD</div>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="maps.html">Maps</a>
+      <a href="#">Community</a>
+    </nav>
+  </header>
+
+  <main class="planner-container">
+    <h1 id="map-title">Loading...</h1>
+    <p id="map-description"></p>
+
+    <div class="planner-area">
+      <p>This is where your tactical planner tools will go.</p>
+    </div>
+  </main>
+
+  <script>
+    // Read ?map=bazaar from the URL
+    const params = new URLSearchParams(window.location.search);
+    const map = params.get("map");
+
+    // Map data (you can expand this later)
+    const mapInfo = {
+      bazaar: {
+        name: "Bazaar",
+        description: "A tight, market-style map with close-range engagements."
+      },
+      downfall: {
+        name: "Downfall",
+        description: "A large, open map with long sightlines and elevation."
+      },
+      quarantine: {
+        name: "Quarantine",
+        description: "A foggy, eerie map with lots of cover and flanking routes."
+      },
+      subway: {
+        name: "Subway",
+        description: "A fast-paced underground map with tight corridors."
+      },
+      suburbia: {
+        name: "Suburbia",
+        description: "A neighborhood map with houses, fences, and mid-range fights."
+      },
+      tanker: {
+        name: "Tanker",
+        description: "A unique industrial map with verticality and tight spaces."
+      }
+    };
+
+    // Update the page
+    if (mapInfo[map]) {
+      document.getElementById("map-title").textContent = mapInfo[map].name;
+      document.getElementById("map-description").textContent = mapInfo[map].description;
+    } else {
+      document.getElementById("map-title").textContent = "Unknown Map";
+      document.getElementById("map-description").textContent = "This map does not exist.";
+    }
+  </script>
+
+</body>
+</html>
