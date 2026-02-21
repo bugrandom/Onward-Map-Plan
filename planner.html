@@ -32,11 +32,6 @@
         <p>Red 1, Red 2</p>
       </div>
 
-      <div class="team-section">
-        <h3>Objectives</h3>
-        <p>No objectives placed</p>
-      </div>
-
       <!-- ROLE SELECTOR -->
       <div class="team-section">
         <h3>Role</h3>
@@ -80,16 +75,12 @@
     if (mapInfo[map]) {
       document.getElementById("map-title").textContent = mapInfo[map].name;
       document.getElementById("map-image").src = mapInfo[map].image;
-    } else {
-      document.getElementById("map-title").textContent = "Unknown Map";
-      document.getElementById("map-image").src = "";
     }
 
     // -------------------------------
     // PLAYER + ROLE SYSTEM
     // -------------------------------
 
-    // Player data
     let players = {
       blue1: { x: 200, y: 200, team: "blue", role: "rifleman" },
       blue2: { x: 260, y: 200, team: "blue", role: "rifleman" },
@@ -97,15 +88,8 @@
       red2:  { x: 260, y: 300, team: "red", role: "rifleman" }
     };
 
-    // Objective icons
-    let objectives = {
-      uplink: { x: 400, y: 250, type: "uplink" },
-      obj1:   { x: 500, y: 300, type: "objective" }
-    };
-
     let selectedPlayer = null;
 
-    // Render players on the map
     function renderPlayers() {
       const layer = document.getElementById("player-layer");
       layer.innerHTML = "";
@@ -132,7 +116,6 @@
       }
     }
 
-    // Select a player
     function selectPlayer(id) {
       selectedPlayer = id;
 
@@ -140,26 +123,7 @@
         btn.classList.toggle("active", btn.dataset.role === players[id].role);
       });
 
-      renderAll();
-    }
-
-    // Render objectives
-    function renderObjectives() {
-      const layer = document.getElementById("player-layer");
-
-      for (const id in objectives) {
-        const o = objectives[id];
-
-        const icon = document.createElement("div");
-        icon.className = `objective-icon ${o.type}`;
-        icon.textContent = o.type === "uplink" ? "📡" : "🎯";
-        icon.style.left = o.x + "px";
-        icon.style.top = o.y + "px";
-
-        icon.addEventListener("mousedown", (e) => startObjectiveDrag(e, id));
-
-        layer.appendChild(icon);
-      }
+      renderPlayers();
     }
 
     // Dragging logic
@@ -182,40 +146,13 @@
       players[dragging].x = e.clientX - offsetX;
       players[dragging].y = e.clientY - offsetY;
 
-      renderAll();
+      renderPlayers();
     }
 
     function stopDrag() {
       dragging = null;
       document.removeEventListener("mousemove", dragMove);
       document.removeEventListener("mouseup", stopDrag);
-    }
-
-    // Objective dragging
-    let draggingObjective = null;
-
-    function startObjectiveDrag(e, id) {
-      draggingObjective = id;
-      offsetX = e.clientX - objectives[id].x;
-      offsetY = e.clientY - objectives[id].y;
-
-      document.addEventListener("mousemove", dragObjectiveMove);
-      document.addEventListener("mouseup", stopObjectiveDrag);
-    }
-
-    function dragObjectiveMove(e) {
-      if (!draggingObjective) return;
-
-      objectives[draggingObjective].x = e.clientX - offsetX;
-      objectives[draggingObjective].y = e.clientY - offsetY;
-
-      renderAll();
-    }
-
-    function stopObjectiveDrag() {
-      draggingObjective = null;
-      document.removeEventListener("mousemove", dragObjectiveMove);
-      document.removeEventListener("mouseup", stopObjectiveDrag);
     }
 
     // Role button click
@@ -228,17 +165,11 @@
         document.querySelectorAll(".role-btn").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
 
-        renderAll();
+        renderPlayers();
       });
     });
 
-    // Render everything
-    function renderAll() {
-      renderPlayers();
-      renderObjectives();
-    }
-
-    renderAll();
+    renderPlayers();
   </script>
 
 </body>
