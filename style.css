@@ -603,4 +603,94 @@ body {
   border-color: #6ee7b7;
   color: #022c22;
 }
+body {
+  margin: 0;
+  background: #050608;
+  color: #e2e8f0;
+  cursor: crosshair;
+  font-family: system-ui, sans-serif;
+}
+
+/* LEFT TOOLBAR */
+.quick-toolbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.quick-toolbar-inner {
+  width: 56px;
+  padding: 12px 0;
+  background: #2a313d;
+  border-radius: 16px;
+  box-shadow: 0 0 18px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.tool-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: 1px solid #3b4250;
+  background: #2a313d;
+  cursor: crosshair;
+  position: relative;
+}
+
+.tool-btn.tool-player::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border-radius: 999px;
+  background: #9ca3af;
+}
+
+.tool-active {
+  box-shadow: 0 0 10px #19c651;
+}
+
+/* PLAYER ICONS */
+.player-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  position: absolute;
+  cursor: crosshair;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.player-blue {
+  background: #1d4ed8;
+  border: 2px solid #60a5fa;
+}
+
+.player-red {
+  background: #b91c1c;
+  border: 2px solid #fca5a5;
+}
+
+.highlight-blue {
+  box-shadow: 0 0 12px 4px rgba(59,130,246,0.9);
+}
+
+.highlight-red {
+  box-shadow: 0 0 12px 4px rgba(248,113,113,0.9);
+}
+
+.dimmed {
+  opacity: 0.35;
+}
+
+.selected-player {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
 
