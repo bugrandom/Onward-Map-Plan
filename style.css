@@ -322,4 +322,9 @@ body {
 .selected-player {
   box-shadow: 0 0 12px 4px #19c651;
 }
+.role-btn.active {
+  background: #19c651;
+  color: #041006;
+  border-color: #19c651;
+}
 
